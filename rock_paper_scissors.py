@@ -2,7 +2,7 @@ import random
 #Hello
 
 player_choice = input("Rock, paper, or scissors? ").lower()
-while player_choice not in ["rock", "paper", "scissors", 4, 5]:
+while player_choice not in ["rock", "paper", "scissors"]:
     player_choice = input("You must enter either: rock, paper, or scissors. ")
 
 
