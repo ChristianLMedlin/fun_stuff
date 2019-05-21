@@ -25,5 +25,3 @@ elif computer_choice == "scissors" and player_choice == "rock":
     print("You win!")
 else:
     print("You lose!")
-
-print("comp " + computer_choice, "play " + player_choice)
