@@ -31,8 +31,8 @@ class Snake():
 
 class Game():
     snake = Snake()
-    display_width = 500
-    display_height = 500
+    display_width = 1000
+    display_height = 1000
     display_color = (0, 0, 0)
     running = True
 
@@ -40,6 +40,11 @@ class Game():
         pygame.init()
         window = pygame.display.set_mode((self.display_width, self.display_height))
         pygame.display.set_caption("Snake!")
+        window.fill(self.display_color)            
+        pygame.draw.rect(window, (self.snake.color), (self.snake.x, self.snake.y, self.snake.width, self.snake.height))
+        pygame.display.update()
+
+    def refresh(self, window):
         window.fill(self.display_color)            
         pygame.draw.rect(window, (self.snake.color), (self.snake.x, self.snake.y, self.snake.width, self.snake.height))
         pygame.display.update()
@@ -66,7 +71,10 @@ class Game():
 
                     if event.key == pygame.K_ESCAPE:
                         self.running = False
-
+            
+            self.snake.update()
+            self.refresh(pygame.display.set_mode((self.display_width, self.display_height)))
+            pygame.time.delay(100)
 
         pygame.quit()
 tester = Game()
