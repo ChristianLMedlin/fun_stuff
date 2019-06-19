@@ -33,7 +33,7 @@ class Game():
     snake = Snake()
     display_width = 500
     display_height = 500
-    display_color = (0, 0 ,0)
+    display_color = (0, 0, 0)
     running = True
 
     def setup(self):
@@ -49,10 +49,25 @@ class Game():
         keys = pygame.key.get_pressed()
 
         while self.running:
-            for event in pygame.event.get():
+            for event in pygame.event.get():                
                 if event.type == pygame.QUIT:
                     self.running = False
                     pygame.quit()
 
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RIGHT:
+                        self.snake.move_right()
+                    if event.key == pygame.K_LEFT:
+                        self.snake.move_left()
+                    if event.key == pygame.K_UP:
+                        self.snake.move_up()
+                    if event.key == pygame.K_DOWN:
+                        self.snake.move_down()
+
+                    if event.key == pygame.K_ESCAPE:
+                        self.running = False
+
+
+        pygame.quit()
 tester = Game()
 tester.main()
