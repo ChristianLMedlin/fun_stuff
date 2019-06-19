@@ -2,14 +2,15 @@ from pygame.locals import *
 import pygame
 
 class Snake():
-    x = 0
-    y = 0
+    x = None
+    y = None
     width = 20
     height = 20
     speed = 20
     direction = None
     color = (255, 0, 0)
 
+    #The following function block and the update function allow the snake to continue movement until another button is pressed.
     def move_right(self):
         self.direction = "right"
     def move_left(self):
@@ -30,12 +31,15 @@ class Snake():
             self.y += self.speed
 
 class Game():
-    snake = Snake()
     display_width = 1000
     display_height = 1000
     display_color = (0, 0, 0)
+    snake = Snake()
+    snake.y = display_height / 2
+    snake.x = display_width / 2
     running = True
 
+    #This runs once when the main function is called, this initializes required PyGame modules, draws the map, and draws the snake at its starting point.  
     def setup(self):
         pygame.init()
         window = pygame.display.set_mode((self.display_width, self.display_height))
@@ -44,11 +48,13 @@ class Game():
         pygame.draw.rect(window, (self.snake.color), (self.snake.x, self.snake.y, self.snake.width, self.snake.height))
         pygame.display.update()
 
+    #This updates the screen to display the current location of all objects.
     def refresh(self, window):
         window.fill(self.display_color)            
         pygame.draw.rect(window, (self.snake.color), (self.snake.x, self.snake.y, self.snake.width, self.snake.height))
         pygame.display.update()
 
+    #This contains the core functionality of the game, including the main game loop. Pressing Escape or the Exit button will close the PyGame window.
     def main(self):
         self.setup()
         keys = pygame.key.get_pressed()
