@@ -1,6 +1,7 @@
 from pygame.locals import *
 import pygame
 
+
 class Snake():
     x = None
     y = None
@@ -29,18 +30,6 @@ class Snake():
             self.y -= self.speed
         if self.direction == "down":
             self.y += self.speed
-
-# class Lose():
-#     game = Game()
-#     font = pygame.font.Font('pixel_font.ttf', 32)
-#     text = font.render("Game over!", False, red)
-#     text_surface = text.get_rect()
-#     text_surface.center = (game.display_width / 2, game.display_height / 2)
-#     text_display = pygame.display.set_mode((game.display_width, game.display_height))
-#     text_display.blit(text, text_surface)
-#     pygame.display.update()
-
-
 
 
 class Game():
@@ -88,6 +77,11 @@ class Game():
 
             #Need to add functionality to restart the game if a certain button is pressed.
             if self.snake.x > self.display_width or self.snake.x < 0 or self.snake.y > self.display_width or self.snake.y < 0:
+                death_sound = pygame.mixer.music
+                death_sound.load("Death.ogg")
+                death_sound.set_volume(.5)
+                death_sound.play(0)
+
                 while not self.play_again:
                     self.game_over()
                     for event in pygame.event.get():                
