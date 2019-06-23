@@ -1,5 +1,6 @@
 from pygame.locals import *
 import pygame
+import random
 
 
 class Snake():
@@ -37,9 +38,12 @@ class Game():
     display_height = 1000
     display_color = (0, 0, 0)
     window = pygame.display.set_mode((display_width, display_height))
+    food_x = random.randrange(0, display_width, 20)
+    food_y = random.randrange(0, display_height, 20)
+    food_color = (0, 255, 0)
     snake = Snake()
-    snake.y = display_height / 2
     snake.x = display_width / 2
+    snake.y = display_height / 2
     running = True
 
     #When main() is called, this initializes required PyGame modules, draws the map, and draws the snake at its starting point.  
@@ -49,18 +53,31 @@ class Game():
         self.window.fill(self.display_color)            
         pygame.draw.rect(self.window, (self.snake.color), (self.snake.x, self.snake.y, self.snake.width, self.snake.height))
         pygame.display.update()
+        self.food_sound = pygame.mixer.music
+        self.food_sound.load("Food.ogg")
 
     #This updates the screen to display the current location of all objects.
     def refresh(self, window):
         self.window.fill(self.display_color)            
-        pygame.draw.rect(self.window, (self.snake.color), (self.snake.x, self.snake.y, self.snake.width, self.snake.height))
+        pygame.draw.rect(self.window, self.food_color, (self.food_x, self.food_y, self.snake.width, self.snake.height))
+        pygame.draw.rect(self.window, self.snake.color, (self.snake.x, self.snake.y, self.snake.width, self.snake.height))
         pygame.display.update()
+
+    #Generates a new random location for the food.
+    def food_creator(self):
+        self.food_sound.play(0)
+        self.food_x = random.randrange(0, self.display_width, 20)
+        self.food_y = random.randrange(0, self.display_height, 20)
 
     #This displays the game over text and resets snake direction and coordinates.
     def game_over(self):
         game_over_text = pygame.font.Font('pixel_font.ttf', 64).render("Game over!", False, (255, 0, 0))
         text_surface = game_over_text.get_rect()
         text_surface.center = (self.display_width / 2, self.display_height / 2)
+        self.death_sound = pygame.mixer.music
+        self.death_sound.load("Death.ogg")
+        self.death_sound.set_volume(.5)
+        self.death_sound.play(0)
         self.snake.y = self.display_height / 2
         self.snake.x = self.display_width / 2
         self.snake.direction = None
@@ -78,10 +95,6 @@ class Game():
 
             #Game now restarts when space button is pressed, need to add text informing the player.
             if self.snake.x > self.display_width or self.snake.x < 0 or self.snake.y > self.display_width or self.snake.y < 0:
-                death_sound = pygame.mixer.music
-                death_sound.load("Death.ogg")
-                death_sound.set_volume(.5)
-                death_sound.play(0)
                 self.game_over()
                 self.play_again = False
 
@@ -114,6 +127,9 @@ class Game():
                     if event.key == pygame.K_ESCAPE:
                         self.running = False
             
+            if self.snake.x == self.food_x and self.snake.y == self.food_y:
+                self.food_creator()
+
             self.snake.update()
             self.refresh(self.window)
             pygame.time.delay(100)
@@ -123,3 +139,7 @@ class Game():
 
 play_game = Game()
 play_game.main()
+
+'''  
+Chomp sound effect is unreliable: Sound takes too long to activate and sometimes doesn't play if two foods are eaten in quick succession.
+'''
