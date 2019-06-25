@@ -12,7 +12,6 @@ class Snake():
     direction = None
     head_color = (255, 0, 0)
     body_color = (180, 0, 0)
-    body_length = 0
 
     #The following function block and the update function allow the snake to continue movement until another button is pressed.
     def move_right(self):
@@ -46,8 +45,8 @@ class Game():
     snake = Snake()
     snake.x = display_width / 2
     snake.y = display_height / 2
-    #snake.body = [{snake.x: snake.y - 20}, {snake.x: snake.y - 40}]
     snake.body = []
+    snake.body_length = 0
     running = True
 
     #When main() is called, this initializes required PyGame modules, draws the map, and draws the snake at its starting point.  
@@ -80,15 +79,11 @@ class Game():
         self.food_y = random.randrange(0, self.display_height, 20)
 
     #This needs to increase the length of the snake by 2 when food is eaten. This will be 2 elements inserted into a list, the elements will be the previous snake coordinates.
-
-    ''' This section is broken '''
     def control_body(self):
-        for length in range(self.snake.body_length + 1):
-            self.snake.body.insert(0, {self.snake.x: self.snake.y})
+        self.snake.body.insert(0, {self.snake.x: self.snake.y})
 
-        for _ in self.snake.body:
-            if len(self.snake.body) > self.snake.body_length - 1:
-                del self.snake.body[0]
+        while len(self.snake.body) > self.snake.body_length:
+            del self.snake.body[self.snake.body_length]
 
     #This displays the game over text and resets snake direction and coordinates.
     def game_over(self):
@@ -101,10 +96,23 @@ class Game():
         self.death_sound.play(0)
         self.snake.y = self.display_height / 2
         self.snake.x = self.display_width / 2
+        self.snake.body = []
+        self.snake.body_length = 0
         self.snake.direction = None
+        self.play_again = False
 
         self.window.blit(game_over_text, text_surface)
         pygame.display.update()     
+
+        while not self.play_again:
+            pygame.time.delay(100)
+
+            for event in pygame.event.get():                
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+
+                if event.type == pygame.KEYDOWN and event.key ==  pygame.K_SPACE:
+                    self.play_again = True
 
     #This contains the core functionality of the game, including the main game loop. Pressing Escape or the Exit button will close the PyGame window.
     def main(self):
@@ -117,17 +125,7 @@ class Game():
             #Game now restarts when space button is pressed, need to add text informing the player.
             if self.snake.x > self.display_width or self.snake.x < 0 or self.snake.y > self.display_width or self.snake.y < 0:
                 self.game_over()
-                self.play_again = False
-
-                while not self.play_again:
-                    pygame.time.delay(100)
-
-                    for event in pygame.event.get():                
-                        if event.type == pygame.QUIT:
-                            pygame.quit()
-
-                        if event.type == pygame.KEYDOWN and event.key ==  pygame.K_SPACE:
-                            self.play_again = True
+                
 
             #The following code closes the game of the X button is clicked and controls movements for the snake when the arrow keys are pressed.
             for event in pygame.event.get():                
@@ -149,7 +147,7 @@ class Game():
                         self.running = False
             
             if self.snake.x == self.food_x and self.snake.y == self.food_y:
-                self.snake.body_length += 2
+                self.snake.body_length += 3
                 self.food_eaten()
 
             self.control_body()
