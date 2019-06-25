@@ -56,8 +56,8 @@ class Game():
         self.window.fill(self.display_color)            
         pygame.draw.rect(self.window, (self.snake.head_color), (self.snake.x, self.snake.y, self.snake.width, self.snake.height))
         pygame.display.update()
-        self.food_sound = pygame.mixer.music
-        self.food_sound.load("Food.ogg")
+        self.food_sound = pygame.mixer.Sound("Food.ogg")
+        #self.food_sound.load("Food.ogg")
 
     #This updates the screen to display the current location of all objects.
     def refresh(self, window):
@@ -86,13 +86,18 @@ class Game():
             del self.snake.body[self.snake.body_length]
 
     #This displays the game over text and resets snake direction and coordinates.
+    #This also sets and plays the proper sound queues.
     def game_over(self):
         game_over_text = pygame.font.Font('pixel_font.ttf', 64).render("Game over!", False, (255, 0, 0))
-        text_surface = game_over_text.get_rect()
-        text_surface.center = (self.display_width / 2, self.display_height / 2)
+        game_over_surface = game_over_text.get_rect()
+        game_over_surface.center = (self.display_width / 2, (self.display_height / 2) - 25)
+        play_again_text = pygame.font.Font('pixel_font.ttf', 32).render("Press Space to play again.", False, (255, 0, 0))
+        play_again_surface = play_again_text.get_rect()
+        play_again_surface.center = (self.display_width / 2, (self.display_height / 2) + 25)
+
         self.death_sound = pygame.mixer.music
-        self.death_sound.load("Death.ogg")
-        self.death_sound.set_volume(.5)
+        self.death_sound.load("Snake_death.ogg")
+        self.death_sound.set_volume(1)
         self.death_sound.play(0)
         self.snake.y = self.display_height / 2
         self.snake.x = self.display_width / 2
@@ -101,7 +106,7 @@ class Game():
         self.snake.direction = None
         self.play_again = False
 
-        self.window.blit(game_over_text, text_surface)
+        self.window.blits(blit_sequence=((game_over_text, game_over_surface), (play_again_text, play_again_surface)))
         pygame.display.update()     
 
         while not self.play_again:
@@ -138,18 +143,19 @@ class Game():
                     pygame.quit()
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RIGHT:
+                    if event.key == pygame.K_RIGHT and self.snake.direction != "left":
                         self.snake.move_right()
-                    if event.key == pygame.K_LEFT:
+                    if event.key == pygame.K_LEFT and self.snake.direction != "right":
                         self.snake.move_left()
-                    if event.key == pygame.K_UP:
+                    if event.key == pygame.K_UP and self.snake.direction != "down":
                         self.snake.move_up()
-                    if event.key == pygame.K_DOWN:
+                    if event.key == pygame.K_DOWN and self.snake.direction != "up":
                         self.snake.move_down()
 
                     if event.key == pygame.K_ESCAPE:
                         self.running = False
             
+            #If the player eats the food, this will increase the snake's length.
             if self.snake.x == self.food_x and self.snake.y == self.food_y:
                 self.snake.body_length += 3
                 self.food_eaten()
@@ -157,7 +163,7 @@ class Game():
             self.control_body()
             self.snake.update()
             self.refresh(self.window)
-            pygame.time.delay(100)
+            pygame.time.delay(75)
 
         pygame.quit()
 
@@ -166,7 +172,13 @@ play_game = Game()
 play_game.main()
 
 '''  
-Chomp sound effect is unreliable: Sound takes too long to activate and sometimes doesn't play if two foods are eaten in quick succession.
+Chomp sound takes too long to activate.
 
-After the player loses a game, the game should restart when the player presses the arrow keys again, there should be a text display that informs the user of this option.
+After the player loses a game the player should be informed of the amount of food eaten.
+
+During play, add a counter to the top to display the score of the player.
+
+Player should not be able to reverse direction into themselves and cause an instant loss, this can still occer if directions are changed very quickly.
+
+Experiment with making the background into a grid and the try giving the snake blocks a thin black outline.
 '''
