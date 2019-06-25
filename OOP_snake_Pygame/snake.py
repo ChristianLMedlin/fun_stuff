@@ -10,7 +10,9 @@ class Snake():
     height = 20
     speed = 20
     direction = None
-    color = (255, 0, 0)
+    head_color = (255, 0, 0)
+    body_color = (180, 0, 0)
+    body_length = 0
 
     #The following function block and the update function allow the snake to continue movement until another button is pressed.
     def move_right(self):
@@ -44,6 +46,8 @@ class Game():
     snake = Snake()
     snake.x = display_width / 2
     snake.y = display_height / 2
+    #snake.body = [{snake.x: snake.y - 20}, {snake.x: snake.y - 40}]
+    snake.body = []
     running = True
 
     #When main() is called, this initializes required PyGame modules, draws the map, and draws the snake at its starting point.  
@@ -51,23 +55,40 @@ class Game():
         pygame.init()
         pygame.display.set_caption("Snake!")
         self.window.fill(self.display_color)            
-        pygame.draw.rect(self.window, (self.snake.color), (self.snake.x, self.snake.y, self.snake.width, self.snake.height))
+        pygame.draw.rect(self.window, (self.snake.head_color), (self.snake.x, self.snake.y, self.snake.width, self.snake.height))
         pygame.display.update()
         self.food_sound = pygame.mixer.music
         self.food_sound.load("Food.ogg")
 
     #This updates the screen to display the current location of all objects.
     def refresh(self, window):
-        self.window.fill(self.display_color)            
+        self.window.fill(self.display_color)   
+
+        for i in self.snake.body:
+            for snake_x, snake_y in i.items():
+                pygame.draw.rect(self.window, self.snake.body_color, (snake_x, snake_y, self.snake.width, self.snake.height))
+         
         pygame.draw.rect(self.window, self.food_color, (self.food_x, self.food_y, self.snake.width, self.snake.height))
-        pygame.draw.rect(self.window, self.snake.color, (self.snake.x, self.snake.y, self.snake.width, self.snake.height))
+        pygame.draw.rect(self.window, self.snake.head_color, (self.snake.x, self.snake.y, self.snake.width, self.snake.height))
+
         pygame.display.update()
 
     #Generates a new random location for the food.
-    def food_creator(self):
+    def food_eaten(self):
         self.food_sound.play(0)
         self.food_x = random.randrange(0, self.display_width, 20)
         self.food_y = random.randrange(0, self.display_height, 20)
+
+    #This needs to increase the length of the snake by 2 when food is eaten. This will be 2 elements inserted into a list, the elements will be the previous snake coordinates.
+
+    ''' This section is broken '''
+    def control_body(self):
+        for length in range(self.snake.body_length + 1):
+            self.snake.body.insert(0, {self.snake.x: self.snake.y})
+
+        for _ in self.snake.body:
+            if len(self.snake.body) > self.snake.body_length - 1:
+                del self.snake.body[0]
 
     #This displays the game over text and resets snake direction and coordinates.
     def game_over(self):
@@ -128,8 +149,10 @@ class Game():
                         self.running = False
             
             if self.snake.x == self.food_x and self.snake.y == self.food_y:
-                self.food_creator()
+                self.snake.body_length += 2
+                self.food_eaten()
 
+            self.control_body()
             self.snake.update()
             self.refresh(self.window)
             pygame.time.delay(100)
@@ -142,4 +165,6 @@ play_game.main()
 
 '''  
 Chomp sound effect is unreliable: Sound takes too long to activate and sometimes doesn't play if two foods are eaten in quick succession.
+
+After the player loses a game, the game should restart when the player presses the arrow keys again, there should be a text display that informs the user of this option.
 '''
