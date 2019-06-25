@@ -123,10 +123,14 @@ class Game():
             #This causes the player to lose if they go out of bounds.
 
             #Game now restarts when space button is pressed, need to add text informing the player.
-            if self.snake.x > self.display_width or self.snake.x < 0 or self.snake.y > self.display_width or self.snake.y < 0:
+            if self.snake.x >= self.display_width or self.snake.x < 0 or self.snake.y >= self.display_width or self.snake.y < 0:
                 self.game_over()
-                
 
+            for index in self.snake.body:
+                for snake_x, snake_y in index.items():
+                    if self.snake.x == snake_x and self.snake.y == snake_y:
+                        self.game_over()
+                
             #The following code closes the game of the X button is clicked and controls movements for the snake when the arrow keys are pressed.
             for event in pygame.event.get():                
                 if event.type == pygame.QUIT:
