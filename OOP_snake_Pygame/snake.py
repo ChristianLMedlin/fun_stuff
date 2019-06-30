@@ -78,6 +78,7 @@ class Game():
         self.food_x = random.randrange(0, self.display_width, 20)
         self.food_y = random.randrange(0, self.display_height, 20)
 
+        #while self.food_x and self.food_y in self.
     #This needs to increase the length of the snake by 2 when food is eaten. This will be 2 elements inserted into a list, the elements will be the previous snake coordinates.
     def control_body(self):
         self.snake.body.insert(0, {self.snake.x: self.snake.y})
