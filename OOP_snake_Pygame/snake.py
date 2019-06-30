@@ -42,6 +42,7 @@ class Game():
     food_x = random.randrange(0, display_width, 20)
     food_y = random.randrange(0, display_height, 20)
     food_color = (0, 255, 0)
+    food_points = 0
     snake = Snake()
     snake.x = display_width / 2
     snake.y = display_height / 2
@@ -77,6 +78,7 @@ class Game():
         self.food_sound.play(0)
         self.food_x = random.randrange(0, self.display_width, 20)
         self.food_y = random.randrange(0, self.display_height, 20)
+        self.food_points += 1
 
         #while self.food_x and self.food_y in self.
     #This needs to increase the length of the snake by 2 when food is eaten. This will be 2 elements inserted into a list, the elements will be the previous snake coordinates.
@@ -89,6 +91,10 @@ class Game():
     #This displays the game over text and resets snake direction and coordinates.
     #This also sets and plays the proper sound queues.
     def game_over(self):
+        self.window.fill(self.display_color)
+        display_score_text = pygame.font.Font('pixel_font.ttf', 24).render(f"You scored {self.food_points} points and achieved a length of {len(self.snake.body) + 1} blocks!", False, (255, 0, 0))
+        display_score_surface = display_score_text.get_rect()
+        display_score_surface.center = (self.display_width / 2, 50)
         game_over_text = pygame.font.Font('pixel_font.ttf', 64).render("Game over!", False, (255, 0, 0))
         game_over_surface = game_over_text.get_rect()
         game_over_surface.center = (self.display_width / 2, (self.display_height / 2) - 25)
@@ -102,12 +108,13 @@ class Game():
         self.death_sound.play(0)
         self.snake.y = self.display_height / 2
         self.snake.x = self.display_width / 2
+        self.food_points = 0
         self.snake.body = []
         self.snake.body_length = 0
         self.snake.direction = None
         self.play_again = False
 
-        self.window.blits(blit_sequence=((game_over_text, game_over_surface), (play_again_text, play_again_surface)))
+        self.window.blits(blit_sequence=((display_score_text, display_score_surface), (game_over_text, game_over_surface), (play_again_text, play_again_surface)))
         pygame.display.update()     
 
         while not self.play_again:
