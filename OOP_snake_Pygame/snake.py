@@ -182,8 +182,6 @@ play_game.main()
 '''  
 Chomp sound takes too long to activate.
 
-After the player loses a game the player should be informed of the amount of food eaten.
-
 During play, add a counter to the top to display the score of the player.
 
 Player should not be able to reverse direction into themselves and cause an instant loss, this can still occer if directions are changed very quickly.
