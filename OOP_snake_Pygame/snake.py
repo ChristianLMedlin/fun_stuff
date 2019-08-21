@@ -58,7 +58,6 @@ class Game():
         pygame.draw.rect(self.window, (self.snake.head_color), (self.snake.x, self.snake.y, self.snake.width, self.snake.height))
         pygame.display.update()
         self.food_sound = pygame.mixer.Sound("Food.ogg")
-        #self.food_sound.load("Food.ogg")
 
     #This updates the screen to display the current location of all objects.
     def refresh(self, window):
@@ -91,6 +90,8 @@ class Game():
     #This displays the game over text and resets snake direction and coordinates.
     #This also sets and plays the proper sound queues.
     def game_over(self):
+
+        #The Following block sets up three different text overlays.
         self.window.fill(self.display_color)
         display_score_text = pygame.font.Font('pixel_font.ttf', 24).render(f"You scored {self.food_points} points and achieved a length of {len(self.snake.body) + 1} blocks!", False, (255, 0, 0))
         display_score_surface = display_score_text.get_rect()
@@ -102,6 +103,7 @@ class Game():
         play_again_surface = play_again_text.get_rect()
         play_again_surface.center = (self.display_width / 2, (self.display_height / 2) + 25)
 
+        #If the player dies, plays the death sound and resets all neccesary variables to their default state.
         self.death_sound = pygame.mixer.music
         self.death_sound.load("Snake_death.ogg")
         self.death_sound.set_volume(1)
@@ -150,6 +152,7 @@ class Game():
                     self.running = False
                     pygame.quit()
 
+                #Determines which direction key is pressed. If the player is not traveling in the opposite direction, moves the player in the direction that the key indicates.
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RIGHT and self.snake.direction != "left":
                         self.snake.move_right()
